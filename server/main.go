@@ -4,6 +4,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/core"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/redis"
+	"github.com/gin-gonic/gin"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 )
@@ -42,4 +44,31 @@ func main() {
 		defer db.Close()
 	}
 	core.RunWindowsServer()
+	redis.InitRedis()
+
+	// 初始化 Gin 路由
+	r := gin.Default()
+
+	// 设置路由
+	r.GET("/", func(c *gin.Context) {
+		// 设置 Redis 缓存中的 key
+		err := redis.RedisClient.Set(redis.Ctx, "name", "RedisDemo", 0).Err()
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Redis 设置失败"})
+			return
+		}
+
+		// 获取 Redis 缓存中的 key
+		val, err := redis.RedisClient.Get(redis.Ctx, "name").Result()
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Redis 获取失败"})
+			return
+		}
+
+		// 返回 Redis 中的值
+		c.JSON(200, gin.H{"key": val})
+	})
+
+	// 启动 Gin 服务器
+	r.Run(":8080") // 监听端口 8080
 }

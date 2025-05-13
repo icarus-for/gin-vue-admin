@@ -68,3 +68,8 @@ type GetUserList struct {
 	Phone    string `json:"phone" form:"phone"`
 	Email    string `json:"email" form:"email"`
 }
+
+type DelRecordLoginLog struct {
+	LoginAt  string `json:"loginat"`
+	LogoutAt string `json:"logoutat"`
+}

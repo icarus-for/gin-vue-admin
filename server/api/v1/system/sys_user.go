@@ -67,11 +67,26 @@ func (b *BaseApi) Login(c *gin.Context) {
 			return
 		}
 		b.TokenNext(c, *user)
+		go func() {
+			record := system.SysOperationRecord{
+				Ip:     c.ClientIP(),
+				Method: c.Request.Method,
+				Path:   c.FullPath(),
+				Status: 200,
+				Agent:  c.Request.UserAgent(),
+				Body:   "用户登录成功",
+				UserID: int(user.ID),
+			}
+			if err := global.GVA_DB.Create(&record).Error; err != nil {
+				global.GVA_LOG.Error("记录登录信息失败！", zap.Error(err))
+			}
+		}()
 		return
+	} else {
+		// 验证码次数+1
+		global.BlackCache.Increment(key, 1)
+		response.FailWithMessage("验证码错误", c)
 	}
-	// 验证码次数+1
-	global.BlackCache.Increment(key, 1)
-	response.FailWithMessage("验证码错误", c)
 }
 
 // TokenNext 登录以后签发jwt
@@ -84,6 +99,8 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	}
 	if !global.GVA_CONFIG.System.UseMultipoint {
 		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		// 登录记录追加（单点登录模式）
+		go RecordLoginLog(user.ID, user.Username)
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -99,6 +116,8 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 			return
 		}
 		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		//登录记录追加（多点登录首次）
+		go RecordLoginLog(user.ID, user.Username)
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -119,6 +138,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 			return
 		}
 		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		go RecordLoginLog(user.ID, user.Username)
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,

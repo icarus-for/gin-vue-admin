@@ -3,9 +3,10 @@ package system
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
@@ -210,6 +211,7 @@ func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, au
 
 func (userService *UserService) DeleteUser(id int) (err error) {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		//global.GVA_DB.Transaction是执行一系列的操作，如果中途有操作失败，则自动回滚
 		if err := tx.Where("id = ?", id).Delete(&system.SysUser{}).Error; err != nil {
 			return err
 		}

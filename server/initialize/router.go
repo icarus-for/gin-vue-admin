@@ -8,6 +8,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
 	"github.com/flipped-aurora/gin-vue-admin/server/router"
+	system1 "github.com/flipped-aurora/gin-vue-admin/server/router/products"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -32,8 +33,17 @@ func (fs justFilesFilesystem) Open(name string) (http.File, error) {
 }
 
 // 初始化总路由
+var SystemRouter = new(system1.RouterGroup)
 
 func Routers() *gin.Engine {
+	//Router1 := gin.Default()
+
+	// 统一挂载分组路由
+	// apiGroup := r.Group("/api/v1")
+
+	// new(system.ProductRouter).InitProductRouter(apiGroup)
+	// // 👈 这里注册 products 模块
+
 	Router := gin.New()
 	Router.Use(gin.Recovery())
 	if gin.Mode() == gin.DebugMode {
@@ -42,6 +52,7 @@ func Routers() *gin.Engine {
 
 	systemRouter := router.RouterGroupApp.System
 	exampleRouter := router.RouterGroupApp.Example
+	system1Router := router.RouterGroupApp.System1
 	// 如果想要不使用nginx代理前端网页，可以修改 web/.env.production 下的
 	// VUE_APP_BASE_API = /
 	// VUE_APP_BASE_PATH = http://localhost
@@ -95,7 +106,7 @@ func Routers() *gin.Engine {
 		exampleRouter.InitCustomerRouter(PrivateGroup)                      // 客户路由
 		exampleRouter.InitFileUploadAndDownloadRouter(PrivateGroup)         // 文件上传下载功能路由
 		exampleRouter.InitAttachmentCategoryRouterRouter(PrivateGroup)      // 文件上传下载分类
-
+		system1Router.InitProductRouter(PrivateGroup)
 	}
 
 	//插件路由安装

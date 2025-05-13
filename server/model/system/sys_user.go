@@ -19,6 +19,8 @@ var _ Login = new(SysUser)
 
 type SysUser struct {
 	global.GVA_MODEL
+	Sex           string         `json:sex" gorm:"default:男;comment:用户性别"`
+	Nationality   string         `json:"nationality" gorm:"default:汉族;comment:用户民族"`
 	UUID          uuid.UUID      `json:"uuid" gorm:"index;comment:用户UUID"`                                                                   // 用户UUID
 	Username      string         `json:"userName" gorm:"index;comment:用户登录名"`                                                                // 用户登录名
 	Password      string         `json:"-"  gorm:"comment:用户登录密码"`                                                                           // 用户登录密码
@@ -31,6 +33,8 @@ type SysUser struct {
 	Email         string         `json:"email"  gorm:"comment:用户邮箱"`                                                                         // 用户邮箱
 	Enable        int            `json:"enable" gorm:"default:1;comment:用户是否被冻结 1正常 2冻结"`                                                    //用户是否被冻结 1正常 2冻结
 	OriginSetting common.JSONMap `json:"originSetting" form:"originSetting" gorm:"type:text;default:null;column:origin_setting;comment:配置;"` //配置
+	UserLogTime   string         `json:"loginTime" gorm:"comment:用户登录时间"`                                                                    //用户登录时间
+
 }
 
 func (SysUser) TableName() string {

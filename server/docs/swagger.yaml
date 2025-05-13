@@ -1476,6 +1476,27 @@ definitions:
         description: 更新时间
         type: string
     type: object
+  system.LoginLog:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      login_at:
+        description: 登录时间
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      user_id:
+        description: 用户ID
+        type: integer
+      username:
+        description: 用户名
+        type: string
+    type: object
   system.Meta:
     properties:
       activeName:
@@ -1494,6 +1515,9 @@ definitions:
         type: boolean
       title:
         description: 菜单名
+        type: string
+      transitionType:
+        description: 路由切换动画
         type: string
     type: object
   system.SysApi:
@@ -1900,6 +1924,11 @@ definitions:
       headerImg:
         description: 用户头像
         type: string
+      loginTime:
+        description: 用户登录时间
+        type: string
+      nationality:
+        type: string
       nickName:
         description: 用户昵称
         type: string
@@ -1909,6 +1938,8 @@ definitions:
         description: 配置
       phone:
         description: 用户手机号
+        type: string
+      sex:
         type: string
       updatedAt:
         description: 更新时间
@@ -1929,7 +1960,7 @@ info:
   contact: {}
   description: 使用gin+vue进行极速开发的全栈开发基础平台
   title: Gin-Vue-Admin Swagger API接口文档
-  version: v2.7.9-beta
+  version: v2.8.1
 paths:
   /api/createApi:
     post:
@@ -2227,6 +2258,788 @@ paths:
       summary: 修改基础api
       tags:
       - SysApi
+  /api/v1/cart:
+    get:
+      consumes:
+      - application/json
+      description: 获得用户购物车列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户购物车列表
+      tags:
+      - 用户购物车
+  /api/v1/cart/items/add:
+    post:
+      consumes:
+      - application/json
+      description: 输入 sku_id和数量来添加购物车
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      - description: 商品数量，不填则为1
+        in: query
+        name: quantity
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 输入 sku_id和数量来添加购物车
+      tags:
+      - 用户购物车
+  /api/v1/cart/items/change:
+    put:
+      consumes:
+      - application/json
+      description: 输入 sku_id和数量来更改商品数量
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      - description: 订单数量 (必填)必须是1以上
+        in: query
+        name: quantity
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 输入 sku_id和数量来更改商品数量
+      tags:
+      - 用户购物车
+  /api/v1/cart/items/del:
+    delete:
+      consumes:
+      - application/json
+      description: 输入 sku_id来删除购物车
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 输入 sku_id来删除购物车
+      tags:
+      - 用户购物车
+  /api/v1/history:
+    get:
+      consumes:
+      - application/json
+      description: 获得用户浏览记录
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户浏览记录
+      tags:
+      - 用户浏览记录
+  /api/v1/history/add:
+    post:
+      consumes:
+      - application/json
+      description: 根据 sku_id 添加浏览历史
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 sku_id 添加浏览历史
+      tags:
+      - 用户浏览记录
+  /api/v1/history/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 根据 sku_id 删除浏览历史
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 sku_id 删除浏览历史
+      tags:
+      - 用户浏览记录
+  /api/v1/orders/checkout/apply-coupon:
+    post:
+      consumes:
+      - application/json
+      description: 使用优惠券
+      parameters:
+      - description: 优惠券code
+        in: query
+        name: coupon_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 使用优惠券
+      tags:
+      - 支付
+  /api/v1/orders/checkout/info:
+    get:
+      consumes:
+      - application/json
+      description: 获取可利用优惠券和积分
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取可利用优惠券和积分
+      tags:
+      - 支付
+  /api/v1/orders/checkout/remove-coupon:
+    delete:
+      consumes:
+      - application/json
+      description: 撤销优惠券
+      parameters:
+      - description: 优惠券code
+        in: query
+        name: coupon_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 撤销优惠券
+      tags:
+      - 支付
+  /api/v1/orders/checkout/remove-points:
+    delete:
+      consumes:
+      - application/json
+      description: 撤销使用的积分
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 撤销使用的积分
+      tags:
+      - 支付
+  /api/v1/orders/checkout/use-points:
+    post:
+      consumes:
+      - application/json
+      description: 使用积分
+      parameters:
+      - description: 输入要消耗的积分
+        in: query
+        name: points
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 使用积分
+      tags:
+      - 支付
+  /api/v1/payments/methods:
+    get:
+      consumes:
+      - application/json
+      description: 支付方式
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 支付方式
+      tags:
+      - 支付
+  /api/v1/products/coordinates:
+    get:
+      consumes:
+      - application/json
+      description: 根据商品code获得推荐搭配
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: product_code
+        required: true
+        type: string
+      - description: 每页数量（默认 4，最大100）
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取相关搭配商品
+      tags:
+      - 商品管理
+  /api/v1/products/favorites/add:
+    post:
+      consumes:
+      - application/json
+      description: 根据 sku_id 添加收藏
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 sku_id 添加收藏
+      tags:
+      - 商品管理
+  /api/v1/products/favorites/delete:
+    delete:
+      consumes:
+      - application/json
+      description: 根据 sku_id 删除收藏
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 sku_id 删除收藏
+      tags:
+      - 商品管理
+  /api/v1/products/favorites/skus:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定用户收藏列表
+      parameters:
+      - description: 页码（默认 1）
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量（默认 10，最大100）
+        in: query
+        name: limit
+        type: integer
+      - description: 排序方式（newest, oldest）
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户收藏列表
+      tags:
+      - 商品管理
+  /api/v1/products/images:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定商品的画像
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: sku_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 sku_id 获取商品画像
+      tags:
+      - 商品管理
+  /api/v1/products/questions:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定商品的问答信息，支持分页、排序
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: product_code
+        required: true
+        type: string
+      - description: 页码（默认 1）
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量（默认 10，最大100）
+        in: query
+        name: limit
+        type: integer
+      - description: 排序方式（newest, oldest, most_helpful）
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 product_code 获取商品问答列表
+      tags:
+      - 商品管理
+  /api/v1/products/related:
+    get:
+      consumes:
+      - application/json
+      description: 根据商品code获得关联商品
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: product_code
+        required: true
+        type: string
+      - description: 每页数量（默认 5，最大100）
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取关联商品
+      tags:
+      - 商品管理
+  /api/v1/products/reviews:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定商品的评论信息，支持分页、排序、星级筛选
+      parameters:
+      - description: 商品编码（必填）
+        in: query
+        name: product_code
+        required: true
+        type: string
+      - description: 页码（默认 1）
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量（默认 10，最大100）
+        in: query
+        name: limit
+        type: integer
+      - description: 排序方式（newest, oldest, highest_rating, lowest_rating, most_helpful）
+        in: query
+        name: sort
+        type: string
+      - description: 星级筛选（1～5）
+        in: query
+        name: rating
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 product_code 获取商品评论列表
+      tags:
+      - 商品管理
+  /api/v1/products/targetSku_id:
+    get:
+      parameters:
+      - description: SKU ID
+        in: query
+        name: sku_id
+        type: string
+      - description: 商品编码
+        in: query
+        name: product_code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 返回商品 SKU 信息
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 根据 sku_id 和 product_code 获取商品 SKU 详情
+      tags:
+      - 商品管理
+  /api/v1/shipping-addresses:
+    get:
+      consumes:
+      - application/json
+      description: 用户配送地址列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 用户配送地址列表
+      tags:
+      - 用户配送地址
+  /api/v1/shipping-addresses/add:
+    post:
+      consumes:
+      - application/json
+      description: 追加用户配送地址
+      parameters:
+      - description: 邮政编码
+        in: query
+        name: postal_code
+        required: true
+        type: string
+      - description: 都道府県
+        in: query
+        name: prefecture
+        required: true
+        type: string
+      - description: 市区町村
+        in: query
+        name: city
+        required: true
+        type: string
+      - description: 丁目・番地
+        in: query
+        name: address_line1
+        required: true
+        type: string
+      - description: 建物名・部屋番号
+        in: query
+        name: address_line2
+        required: true
+        type: string
+      - description: 氏名
+        in: query
+        name: recipient_name
+        required: true
+        type: string
+      - description: 電話番号
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      - description: 是否设为默认地址1为是，2为否
+        in: query
+        name: is_default
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 追加用户配送地址
+      tags:
+      - 用户配送地址
+  /api/v1/shipping-addresses/change:
+    put:
+      consumes:
+      - application/json
+      description: 编辑用户配送地址
+      parameters:
+      - description: 地址编号
+        in: query
+        name: address_id
+        required: true
+        type: string
+      - description: 邮政编码
+        in: query
+        name: postal_code
+        type: string
+      - description: 都道府県
+        in: query
+        name: prefecture
+        type: string
+      - description: 市区町村
+        in: query
+        name: city
+        type: string
+      - description: 丁目・番地
+        in: query
+        name: address_line1
+        type: string
+      - description: 建物名・部屋番号
+        in: query
+        name: address_line2
+        type: string
+      - description: 氏名
+        in: query
+        name: recipient_name
+        type: string
+      - description: 電話番号
+        in: query
+        name: phone_number
+        type: string
+      - description: 是否设为默认地址1为是，2为否
+        in: query
+        name: is_default
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 编辑用户配送地址
+      tags:
+      - 用户配送地址
+  /api/v1/shipping-addresses/del:
+    delete:
+      consumes:
+      - application/json
+      description: 删除用户配送地址
+      parameters:
+      - description: address_id
+        in: query
+        name: address_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回评论列表
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除用户配送地址
+      tags:
+      - 用户配送地址
   /attachmentCategory/addCategory:
     post:
       consumes:
@@ -2935,8 +3748,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  items:
-                    type: object
+                  items: {}
                   type: array
                 msg:
                   type: string
@@ -4525,18 +5337,6 @@ paths:
       summary: 更新SysDictionaryDetail
       tags:
       - SysDictionaryDetail
-  /sysExportTemplate/ExportTemplate:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses: {}
-      security:
-      - ApiKeyAuth: []
-      summary: 导出表格模板
-      tags:
-      - SysExportTemplate
   /sysExportTemplate/createSysExportTemplate:
     post:
       consumes:
@@ -4618,6 +5418,42 @@ paths:
       summary: 导出表格
       tags:
       - SysExportTemplate
+  /sysExportTemplate/exportExcelByToken:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 导出表格
+      tags:
+      - ExportExcelByToken
+  /sysExportTemplate/exportTemplate:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 导出表格模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/exportTemplateByToken:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 通过token导出表格模板
+      tags:
+      - ExportTemplateByToken
   /sysExportTemplate/findSysExportTemplate:
     get:
       consumes:
@@ -5552,6 +6388,48 @@ paths:
       summary: 分页获取用户列表
       tags:
       - SysUser
+  /user/getUserLoginHistoryById:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: integer
+      - description: 开始时间（格式：2006-01-02）
+        in: query
+        name: start
+        type: string
+      - description: 结束时间（格式：2006-01-02）
+        in: query
+        name: end
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system.LoginLog'
+                  type: array
+                msg:
+                  type: string
+              type: object
+        "400":
+          description: 请求失败
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 条件查询用户登录历史
+      tags:
+      - LoginLog
   /user/resetPassword:
     post:
       parameters:
